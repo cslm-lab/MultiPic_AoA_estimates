@@ -47,3 +47,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# survey setup that is saved in OSF
+study_setup/SoSciSurvey_questionnaire/
