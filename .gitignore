@@ -1,3 +1,4 @@
+# CONCERNING R
 # History files
 .Rhistory
 .Rapp.history
@@ -48,5 +49,20 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
+# CONCERNING PYTHON
+# VSCode
+.vscode
+
+# Jupyter
+.ipynb_checkpoints
+
+# OTHERS
 # survey setup that is saved in OSF
 study_setup/SoSciSurvey_questionnaire/
+
+# other databases
+German_MultiPic_CSV.csv
+SUBTLEX-DE_cleaned_with_Google00.txt
+frequencies/
+MultiPic/
+norms/
