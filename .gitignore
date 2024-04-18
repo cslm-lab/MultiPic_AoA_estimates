@@ -57,12 +57,10 @@ rsconnect/
 .ipynb_checkpoints
 
 # OTHERS
+test
 # survey setup that is saved in OSF
 study_setup/SoSciSurvey_questionnaire/
 
 # other databases
-German_MultiPic_CSV.csv
-SUBTLEX-DE_cleaned_with_Google00.txt
-frequencies/
-MultiPic/
+multipic/
 norms/
