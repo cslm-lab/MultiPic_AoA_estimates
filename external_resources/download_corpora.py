@@ -58,7 +58,7 @@ print('> Done.')
 print('> MultiPic version 5...')
 multipic_url_5 = 'https://figshare.com/ndownloader/files/34462247'
 multipic_df = pd.read_csv(multipic_url_5, sep=';', decimal=',')
-multipic_df.to_csv('multipic/MultiPic_version5.csv', index=False)
+multipic_df.to_csv('multipic/MultiPic_version5.csv', sep=';', decimal=',',index=False)
 print('> Done.')
 
 # print('> SUBTLEX-DE...')
@@ -78,7 +78,7 @@ print('> Done.')
 
 print('> Kuperman (2012)...')
 kuperman_url = 'https://static-content.springer.com/esm/art%3A10.3758%2Fs13428-013-0348-8/MediaObjects/13428_2013_348_MOESM1_ESM.xlsx'
-urlretrieve(kuperman_url, '/norms/Kuperman2012.xlsx')
+urlretrieve(kuperman_url, 'norms/Kuperman_2012.xlsx')
 print('> Done.')
 
 print('\nSCRIPT IS FINISHED')
