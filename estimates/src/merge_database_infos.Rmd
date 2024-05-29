@@ -1,0 +1,76 @@
+---
+title: "merge_database_infos"
+author: "Laura Riedel"
+date: "2024-05-29"
+output: html_document
+---
+<!--Takes raw item-based data (output of data_wrangling.py) and combines it
+with information from existing databases: AoA estimates from Schröder (2012)
+and Birchenough (2017), and frequency information from SUBTLEX-DE (2011).
+It saves the result as "item_based_data_add_info.csv" in ../data/raw/derivatives. -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tibble)
+library(readr)
+library(dplyr)
+################################################################################
+# load custom functions
+source('helper_functions.R', local = knitr::knit_global())
+```
+
+```{r}
+# read in data
+# raw aoa ratings
+raw_aoa <- read_csv('../data/raw/derivatives/item_based_data.csv')
+
+## German norms from Birchenough et al. (2017)
+birchenough_norms <- read_birchenough()
+
+## German norms from Schröder et al. (2011)
+schröder_norms <- read_schröder()
+
+## info on familiarisation items
+fam_items <- read_csv('../../study_setup/data/items_lists/familiarisation_items_overview.csv')
+col_rename <- c("B: AoA mean"="AoAestimate", "B: AoA SD"="SD", "B: min"="min", "B: max"="max", "B: AoALikert mean"="AoALikert", "B: AoALikert SD"="SDLikert", "B: minLikert"="minLikert", "B: maxLikert"="maxLikert")
+fam_items <- fam_items %>% 
+  rename(all_of(col_rename)) %>% 
+  select(-c(RatperWord, unknown)) 
+
+## already combined MultiPic + SUBTLEX-DE frequency information
+multipic_freq <- read_csv('../../external_resources/MultiPic_with_frequencies.csv')
+
+# create lookup overview:
+# add AoA information from Schröder + Birchenough to MultiPic + SUBTLEX-DE frequencies
+multipic_freq <- multipic_freq %>%
+  left_join(birchenough_norms, by="NAME1") %>% 
+  left_join(schröder_norms, by="NAME1", multiple="first")
+
+# add info from lookup overview to raw aoa 
+raw_aoa_with_info <- raw_aoa %>% 
+  left_join(select(multipic_freq, -c(PICTURE, NAME1)), by=join_by("item_number"=="ITEM"))
+
+# add fam info to fam items in raw aoa
+fam_cols <- colnames(fam_items)
+fam_cols <- fam_cols[-1] # remove "Word" column
+fam_cols <- fam_cols[-13] # remove "AoA bins"
+for(item in unique(fam_items$Word)){
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"B: AoA mean" <- fam_items[fam_items$Word == item,]$"B: AoA mean"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"B: AoA SD" <- fam_items[fam_items$Word == item,]$"B: AoA SD"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"B: min" <- fam_items[fam_items$Word == item,]$"B: min"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"B: max" <- fam_items[fam_items$Word == item,]$"B: max"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"B: AoALikert mean" <- fam_items[fam_items$Word == item,]$"B: AoALikert mean"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"B: AoALikert SD" <- fam_items[fam_items$Word == item,]$"B: AoALikert SD"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"B: minLikert" <- fam_items[fam_items$Word == item,]$"B: minLikert"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"B: maxLikert" <- fam_items[fam_items$Word == item,]$"B: maxLikert"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"SUBTLEX" <- fam_items[fam_items$Word == item,]$"SUBTLEX"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"lgSUBTLEX" <- fam_items[fam_items$Word == item,]$"lgSUBTLEX"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"Google00pm" <- fam_items[fam_items$Word == item,]$"Google00pm"
+  raw_aoa_with_info[raw_aoa_with_info$item == item,]$"lgGoogle00" <- fam_items[fam_items$Word == item,]$"lgGoogle00"
+}
+write_excel_csv(raw_aoa_with_info, "../data/raw/derivatives/item_based_data_add_info.csv")
+```
+
