@@ -64,3 +64,6 @@ study_setup/SoSciSurvey_questionnaire/
 # other databases
 multipic/
 norms/
+
+# saved figures created with Rmd
+figures/
