@@ -9,7 +9,7 @@
 
 PREREQUISITE: this scipt expects that the script 
 `merge_multipic_subtlex.py` has already run.
-It also expects the Birchenough et al. (2016) data, our 
+It also expects the Birchenough et al. (2017) data, our 
 MultiPic example sentences, and SUBTLEX-DE to be present.
 
 TO RUN THE SCRIPT: open script location in terminal and type:
@@ -25,7 +25,7 @@ import os
 
 # define paths
 mp_freq_path = '../../external_resources/MultiPic_with_frequencies.csv'
-aoa_path = '../../external_resources/norms/Birchenough_2016.csv'
+aoa_path = '../../external_resources/norms/Birchenough_2017.csv'
 sentences_path = '../data/example_sentences.ods'
 # this is still needed because we want to find good familiarisation
 # items that are NOT present in MultiPic already, and we need 
@@ -59,7 +59,7 @@ def select_repreated_items(df, items_list):
     remaining items per list.
 
     Input:
-        df: dataframe of combined info from MultiPic + Birchenough (2016);
+        df: dataframe of combined info from MultiPic + Birchenough (2017);
             column of AoA bins expected additionally.
         items_list: list of item numbers from list A, B or C.
     Output:
@@ -94,7 +94,7 @@ print('>> Load databases...')
 # MultiPic with frequencies
 mp_freq_df = pd.read_csv(mp_freq_path)
 
-# Birchenough et al. (2016)
+# Birchenough et al. (2017)
 aoa_df = pd.read_csv(aoa_path, encoding='latin_1', usecols=[0,4,5,6,7,8,9,10,11,12,13])
 # lowercase words + remove umlauts to make it comparable to MultiPic vers. 1
 for i in aoa_df.index:
@@ -283,8 +283,8 @@ print(f'Final list lengths:\nControls: {len(shared_items_list)}, A: {len(list_A)
 # select repeated items for each list
 print('\n>> Select repeated items per list (not for control items)...')
 
-# find items in Birchenough (2016) that are in MultiPic
-print('Find items in Birchenough (2016) that are in MultiPic')
+# find items in Birchenough (2017) that are in MultiPic
+print('Find items in Birchenough (2017) that are in MultiPic')
 rep_df = aoa_df.merge(mp_freq_df.rename(columns={'NAME1':'Word'}), on='Word')
 rep_df.reset_index(drop=True, inplace=True)
 
@@ -313,10 +313,10 @@ np.savetxt(save_path+'list_C_repeated.csv', rep_C, delimiter=', ', fmt='% i')
 
 ####################################
 # select familiarisation items
-print('\n>> Select items for familiarisation phase from Birchenough et al. (2016)...')
+print('\n>> Select items for familiarisation phase from Birchenough et al. (2017)...')
 print('Combine database with frequency information from SUBTLEX-DE')
 
-# keep rows from Birchenough (2016) that are not in MultiPic
+# keep rows from Birchenough (2017) that are not in MultiPic
 fam_df = aoa_df[~aoa_df['Word'].isin(mp_freq_df['NAME1'].values)]
 fam_df.reset_index(drop=True, inplace=True)
 
@@ -377,7 +377,7 @@ fam_filtered_df = fam_df[fam_df['Word'].isin(fam_items)].sort_values(by=['AoAest
 
 # save info to csv
 print('Save familiarisation items with infos from Birchenough + SUBTLEX-DE')
-fam_filtered_df.to_csv(save_path+'familiarisation_items.csv', index=False)
+fam_filtered_df.to_csv(save_path+'familiarisation_items_overview.csv', index=False)
 print('Done.')
 
 print('\nEnd of script!')

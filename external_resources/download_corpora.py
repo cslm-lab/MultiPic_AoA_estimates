@@ -2,7 +2,7 @@
 This script downloads all existing corpora necessary for the survey's stimuli creation
 as well as the estimate validation:
     - Schröder (2012)
-    - Birchenough (2016)
+    - Birchenough (2017)
     - MultiPic (2018, 2022)
     - Kuperman (2012)
     - (SUBTLEX-DE; Marc Brysbaert's website currently under construction)
@@ -71,9 +71,9 @@ schröder_url = 'https://static-content.springer.com/esm/art%3A10.3758%2Fs13428-
 urlretrieve(schröder_url, "norms/Schröder_2012.xls")
 print('> Done.')
 
-print('> Birchenough (2016)...')
+print('> Birchenough (2017)...')
 birchenough_url = 'https://static-content.springer.com/esm/art%3A10.3758%2Fs13428-016-0718-0/MediaObjects/13428_2016_718_MOESM1_ESM.csv'
-urlretrieve(birchenough_url, 'norms/Birchenough_2016.csv')
+urlretrieve(birchenough_url, 'norms/Birchenough_2017.csv')
 print('> Done.')
 
 print('> Kuperman (2012)...')
