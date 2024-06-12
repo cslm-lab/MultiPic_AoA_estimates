@@ -11,6 +11,17 @@ library(ggplot2)
 #library(cowplot)
 library(stringr)
 ################################################################################
+load_raw_data <- function(){
+  # Loads raw item-based data and adds another column translating the 
+  # continuous AoA estimate into a Likert rating.
+  aoa_info_original <- read_csv("../data/raw/derivatives/item_based_data_add_info.csv")
+  # add column: estimates in 7-point Likert scale
+  aoa_info <- aoa_info_original %>% 
+    rowwise() %>% 
+    mutate(estimateLikert = rating_to_likert(estimate), .after = estimate)
+  return(aoa_info)
+}
+
 remove_umlauts <- function(input_string){
   # Removes umlauts and ß and lowercases strings.
   #  Input:
@@ -202,13 +213,6 @@ within_participant_corelations <- function(df){
 
 plot_corr_distribution <- function(corr_df, id_list, title, caption){
   # Helper function to plot the distribution of correlations
-  # label generation
-  # annotations <- corr_df %>% 
-  #   filter(corr < 0.45) %>%
-  #   arrange(corr) # sort ascending %>% 
-  #   add_column(y = 2) %>% 
-  #   mutate(label = as.character(corr))
-  # plot
   corr_df %>% 
     mutate(exclusion = if_else(ID %in% id_list, "yes", "no")) %>% 
     ggplot(aes(x=corr, fill = exclusion)) + 
@@ -218,4 +222,15 @@ plot_corr_distribution <- function(corr_df, id_list, title, caption){
     scale_fill_brewer(palette= "Paired") +
     labs(title = title, caption = caption) +
     theme_minimal()
+}
+
+save_corr_distribution_plot <- function(corr_df, id_list, save_path){
+  corr_plot <- corr_df %>% 
+    mutate(exclusion = if_else(ID %in% id_list, "yes", "no")) %>% 
+    ggplot(aes(x=corr, fill = exclusion)) + 
+    geom_histogram(bins = 30) +
+    geom_vline(aes(xintercept = mean(corr_df$corr)), linetype=2) +
+    scale_fill_brewer(palette= "Paired") +
+    theme_minimal()
+  save_plot(save_path, corr_plot)
 }
