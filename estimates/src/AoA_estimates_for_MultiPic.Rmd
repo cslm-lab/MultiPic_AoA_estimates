@@ -1,0 +1,759 @@
+---
+title             : "Dataset of German age-of-acquisition norms for all 750 items of the MultiPic database"
+
+author: 
+  - name          : "Laura H Riedel"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "laura.riedel@uni-potsdam.de"
+    role:         # Contributorship roles (e.g., CRediT, https://casrai.org/credit/)
+      - "Conceptualization"
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+  - name          : "Audrey Bürki"
+    affiliation   : "1"
+    role:
+      - "Writing - Review & Editing"
+      - "Supervision"
+
+affiliation:
+  - id            : "1"
+    institution   : "Potsdam University"
+
+authornote: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Enter author note here.
+
+abstract: |
+  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  
+  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  
+  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  
+  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  
+  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  
+  One or two sentences to put the results into a more **general context**.
+  
+  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : "r-references.bib"
+
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup}
+library(papaja)
+r_refs("r-references.bib")
+library(tibble)
+library(readr)
+library(readxl)
+library(readODS)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+library(RColorBrewer)
+library(cowplot)
+library(stringr)
+# use_condaenv(condaenv='aoa')
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+```{r define-custom-functions}
+source('helper_functions.R', local = knitr::knit_global())
+```
+
+```{r load-data}
+# LOAD DATA WITH ADDITIONAL FREQUENCY + OTHER CORPORA INFO
+aoa_info <- load_raw_data()
+
+# load item information
+# get item numbers used as per-participant control items (repeated items)
+repeated_a <- read_csv("../../study_setup/data/items_lists/list_A_repeated.csv", col_names="item_number")
+repeated_b <- read_csv("../../study_setup/data/items_lists/list_B_repeated.csv", col_names="item_number")
+repeated_c <- read_csv("../../study_setup/data/items_lists/list_C_repeated.csv", col_names="item_number")
+# turn tibble into list
+repeated_items <- c(repeated_a$item_number, repeated_b$item_number, repeated_c$item_number)
+# get item numbers used as global control items (shared items)
+shared_items <- read_csv("../../study_setup/data/items_lists/control_items.csv", col_names="item_number")
+shared_items <- shared_items$item_number
+```
+
+
+# Introduction
+
+# Methods
+<!-- We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. -> 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) --> 
+<!-- We report how we acquired participants, all data exclusions, all manipulations, and all measures in the study. -->
+Ratings were collected by means of online questionnaires that were generated using SoSci Survey (XX <!-- add quote! --> ), made available to participants via www.soscisurvey.de.
+
+## Participants
+<!-- 
+- young native German speakers (ages 18-25)
+- recruited via Prolific and university-internal participant platform (SONA)
+- reimbursement: money or VP Stunden
+-->
+
+## Material
+Our goal was to collect German AoA ratings for the 750 items depicted as standardised line drawings in the MultiPic database [@dunabeitia2018multipic]. For this purpose we took the German naming norms provided for the pictures by the MultiPic database [@dunabeitia2018multipic] and identified unique word items. In cases of multiple entries for one word we manually compared the accompanying pictures to determine whether those items depicted the same semantic concept with different visualisations or different semantic concepts that happened to be homonymous in German (e.g., "Kette" representing pictures for both "necklace" and "chain"). Of the true duplicates, only one instance was kept for the stimulus creation (the item with higher name agreement), leaving a total of 715 word items with unique meanings. In order to clearly disambiguate the homonyms within MultiPic during the stimulus presentation, as well as to ensure that participants would generally think of the presented word items as similarly as possible, we created example sentences for each word item showcasing a particular contextual use of the word.
+
+
+## Procedure
+<!-- 
+- 3 lists:
+    31 items shared across lists
+    25 items repeated within each list
+    10 items additional for familiarisation, taken from Birchenough et al. (no overlap with MultiPic) => (715 - 31) / 3 = 228 + 31 + 25 + 10 = 294 items per list
+- example sentences for items to counter ambiguity
+-->
+The data collection was strongly influenced by @kuperman2012aoa and @birchenough2017aoa. The stimuli were distributed over 3 lists of equal length. All in all, participants had to estimate the age of acquisition of 294 presented words (10 shared familiarisation items, 31 shared control items, 228 unique list items, 25 repeated list items).
+<!-- familiarisation items:
+      In each range bin, filter for possible candidates by limiting the coice to items that 
+        1. lie within one standard deviation from the mean of the entire lgSUBTLEX frequency distribution of all available words, 
+        2. have a comparably low standard deviation from the AoA estimate, 
+        3. are a noun, and
+        4. fit to the MultiPic items, i.e., are rather concrete than abstract.-->
+Preceding all target items in a list, 10 familiarisation items were presented in random order. The familiarisation items were manually chosen from the set of items in @birchenough2017aoa that had no overlap with the MultiPic items such that they fulfilled the following criteria: 1. they represent the entire range of @birchenough2017aoa's AoA scale. For this, the AoA estimates were divided into 10 bins of equal range, and one item needed to be chosen per bin. 2. they lie within one standard deviation from the mean of the log frequency distribution of all available words from the SUBTLEX-DE corpus [@brysbaert2011subtlex_de]. 3. they are a noun and 4. fit to the MultiPic items in that they are rather concrete than abstract concepts. By means of the familiarisation items, participants were supposed to be sensitised to the diversity of words and their age range participants were likely to be exposed to.
+<!-- for item selection: match lists on frequency based on Kuperman et al. (2012)
+        frequency measure: SUBTLEX-DE log frequency
+        divide total word list into 10 equally sized frequency bins
+        select 3 words per bin for shared items 
+        select X words per bin for each list-->
+Of the 715 unique word items of the MultiPic corpus, 31 items were used as control items that were shared across all lists, meaning there were 228 word items unique to each list. The item selection was automatised and proceeded as follows: The MultiPic items were roughly matched on log word frequency using the SUBTLEX-DE frequency norms [@brysbaert2011subtlex_de]. Based on their frequencies, the unique word items were divided into ten equally sized frequency bins. Twelve items could not be assigned to those frequency bins as they had no corresponding entry in SUBTLEX-DE. From each frequency bin, 3 random word items were chosen as control words, the remaining items per bin were distributed as evenly as possible across the three lists. From the twelve word items without frequency information, one was added to the control words while the others were again divided across the lists.
+<!--repeated items
+        - for determining within-participant consistency
+        - limit to relatively low estimate SD (< mean+std)
+        - covering range of AoA estimates: 5 equally spaced AoA bins based on Birchenough (not all items represented!)
+        -> more items in lower AoA bins; highest bin: min. 2 items
+        
+        AoA range dist. of items per list (that have AoA info form Birchenough):
+          list A  list B  list C
+        0 38      35      31
+        1 34      46      50
+        2 17      20      25
+        3 11      7       6
+        4 4       3       2
+        
+        - For a given list of items: first draw one random item from each of the AoA bins to ensure that the supported range is represented at all. Then, another 20 items will be drawn randomly from the entire pool of remaining items per list.
+        Final AoA range dist. of repeated items:
+          list A  list B  list C
+        0 9       8       8
+        1 7       7       12
+        2 3       4       3
+        3 3       5       1
+        4 3       1       1
+        -->
+Of the unique 228 items per list, 25 items were chosen to appear twice in the questionnaire (i.e., repeated items) in order to determine the rating consistency of each participant. 
+Each item was presented with its corresponding example sentence to render the meaning of the presented word unambiguous. 
+<!-- - continuous scale
+    -> based on reasoning of Kuperman et al. (2012): the Likert-scale "artificially restricts the response range and is also more difficult for participants to use" (p. 980)
+    -> include column that "converts" the continuous into a Likert scale
+- meta-information to collect:
+    age
+    educational background
+    first language(s) -> exclude participants that were multilingual before age 6; first language must be German
+    residence -> exclude participants that don't live in Germany at the moment
+    language disorders? (reading disorder, ...)
+    normal / corrected eyesight?
+-->
+
+# Results
+
+## Database cleaning
+<!-- 
+- Manual check:
+    - does participant data seem plausible? -> exclusion of 1 participant (457)
+    - are high estimates (>20) well founded? -> seem to be typos or otherwise implausible; removal of those estimates
+- Automated check:
+    - internal consistency of participants: correlate repeated items within participants; exclude weak participants
+    - remove unreliable participants based on control words
+        -> Kuperman (2012) procedure: correlate each participant's control word estimates with estimates from different   database. Kuperman removes participants with r < 0.4
+        -> Birchenough (2017) procedure: correlate each participant's control word estimates with group mean. Birchenough removes participants with r < 0.4
+    => VISUAL INSPECTION OF CORRELATION DISTRIBUTIONS!! r values close to the 0.4 threshold seem to be part of main distribution -> new threshold of 0.3 applied
+    
+    - removal of outlier estimates: calculation of preliminary group mean estimates; exclusion of estimates outside 2.5 sd  
+-->
+
+```{r exclude-disqualified-participant}
+# remove participant who disqualified
+aoa_info <- aoa_info %>% 
+  filter(ID != 457)
+```
+
+```{r check-high-estimates, eval=FALSE}
+# check: are high estimates well founded?
+aoa_info %>% 
+  # !is.na(item_number) excludes familiarisation items (that don't have an item number from the MultiPic corpus)
+  filter(!is.na(item_number) & estimate > 20)
+```
+<!-- I would argue that all of these ratings are either clear typos or generally very unlikely.-->
+
+```{r preparations-for-excluding-participants}
+# REMOVE ITEMS THAT ARE TYPOS
+aoa_info <- aoa_info %>% 
+  filter(!is.na(item_number) & !estimate > 20)
+
+# EXCLUDING PARTICIPANTS: Calculate correlations
+### KUPERMAN PROCEDURE
+kup_procedure <- kuperman_correlations(aoa_info)
+
+### BIRCHENOUGH PROCEDURE
+birch_procedure <- birchenough_correlations(aoa_info)
+
+# remove participants that weren't intrinsically consistent enough
+within_participant_corrs <- within_participant_corelations(aoa_info)
+```
+
+
+```{r visualise-AoA-distribution-in-Birchenough-and-in-shared-items-(aka-control-items)}
+# find out AoA distribution in Birchenough and in shared items
+birchenough_norms <- read_birchenough()
+birchenough_aoa_bins <- birchenough_norms %>% 
+  select(NAME1, `B: AoA mean`) %>% 
+  mutate(aoa_bin_threshold = cut(birchenough_norms$`B: AoA mean`, breaks = 10)) %>% 
+  mutate(aoa_bin = as.factor(cut(birchenough_norms$`B: AoA mean`, breaks = 10, labels = FALSE)))
+
+# Birchenough AoA distribution plot
+birchenough_aoa_dist <- birchenough_aoa_bins %>% 
+  ggplot(aes(x=`B: AoA mean`, fill = aoa_bin)) +
+  geom_histogram() +
+  scale_fill_brewer(palette= "Paired") +
+  labs(fill= "AoA bin") +
+  theme_minimal()
+
+# shared items AoA distribution plot
+kuperman_procedure_shared <- aoa_info[aoa_info$item_number %in% shared_items & !is.na(aoa_info$`B: AoA mean`),]
+controlitems_aoa_dist <- kuperman_procedure_shared[1:19,] %>% 
+  left_join(select(birchenough_aoa_bins, -`B: AoA mean`), by=join_by(item==NAME1)) %>% 
+  ggplot(aes(x=`B: AoA mean`, fill = aoa_bin)) +
+  geom_histogram() +
+  scale_fill_brewer(palette= "Paired") +
+  labs(fill= "AoA bin") +
+  theme_minimal()
+
+# display plots next to each other
+aoa_distributions_birchenough <- plot_grid(birchenough_aoa_dist, controlitems_aoa_dist, labels= "AUTO", align = "h", rel_widths = c(1.5,1))
+# save_plot("../figures/aoa_distribution_control_items.pdf", aoa_distributions_birchenough, ncol=2)
+aoa_distributions_birchenough
+```
+
+```{r plot-preliminary-group-estimates}
+# AoA distribution of control words according to preliminary group mean estimates
+prelim_aoa_estimates <- get_estimates_overview(aoa_info, all=FALSE)
+prelim_aoa_estimates %>% 
+  mutate(control_word = if_else(item_number %in% shared_items, "yes", "no")) %>% 
+  ggplot(aes(x= estimate_mean, fill = control_word)) +
+  geom_histogram() +
+  geom_vline(aes(xintercept = mean(prelim_aoa_estimates$estimate_mean)), linetype=2) +
+  scale_fill_brewer(palette= "Paired") +
+  labs(title = "Distribution of preliminary AoA group estimates",
+       caption = "Mean AoA estimates before further participants were excluded (based on Kuperman (2012)\nor Birchenough (2017) procedure). Dashed line denotes the overall mean of AoA estimates.") +
+  theme_minimal()
+```
+
+```{r plot-control-items-correlation-Kuperman}
+# Kuperman exclusion
+# distribution of correlations + which participants would be removed
+plot_corr_distribution(kup_procedure$corr_df, kup_procedure$weak_corr_ids, 
+                       title = "Correlations of control items: Kuperman (2012) method",
+                       caption = "Distribution of the correlations of control item ratings to AoA ratings in Birchenough et al. (2017).\n Exclusion of participants with correlation < 0.4. Dashed line denotes the group mean of correlations.")
+```
+
+```{r view-Kuperman-correlations, eval=FALSE}
+kup_procedure$corr_df %>% 
+  filter(corr < 0.45) %>%
+  arrange(corr) # sort ascending
+```
+<!-- The subjects close to the proposed threshold of 0.4 (339, 328, 301) seem to be part of the normal distribution.-->
+
+```{r save-plot-control-items-correlation-Kuperman, eval=FALSE}
+# save_corr_distribution_plot(kup_procedure$corr_df, kup_procedure$weak_corr_ids, 
+#                             save_path = "../figures/before_cleaning/corr-control-items_Kuperman-method.pdf")
+```
+
+```{r plot-control-items-correlation-Birchenough}
+# Birchenough exclusion
+# distribution of correlations + which participants would be removed
+plot_corr_distribution(birch_procedure$corr_df, birch_procedure$weak_corr_ids, 
+                       title = "Correlations of control items: Birchenough (2017) method",
+                       caption = "Distribution of the correlations of control item ratings to item group mean ratings.\n Exclusion of participants with correlation < 0.4. Dashed line denotes the group mean of correlations.")
+```
+
+```{r view-Birchenough-correlations, eval=FALSE}
+birch_procedure$corr_df %>% 
+  filter(corr < 0.45) %>%
+  arrange(corr) # sort ascending
+```
+<!-- Again, the subjects close to the proposed threshold of 0.4 (301) seem to be part of the normal distribution.-->
+
+```{r save-plot-control-items-correlation-Birchenough, eval=FALSE}
+# save_corr_distribution_plot(birch_procedure$corr_df, birch_procedure$weak_corr_ids, 
+#                             save_path = "../figures/before_cleaning/corr-control-items_Birchenough-method.pdf")
+```
+
+```{r}
+# how many control items don't have an AoA estimate in Birchenough et al.?
+missing_shared_estimates <- sum(is.na(aoa_info[aoa_info$ID == 246 & aoa_info$item_number %in% shared_items,]$"B: AoA mean"))
+missing_shared_estimates
+```
+
+```{r}
+# number of participants excluded according to Kuperman (2012) procedure
+print("r < 0.4:")
+length(kup_procedure$weak_corr_ids) 
+print("Outliers far from main distribution (r < 0.3):")
+length(kup_procedure$corr_df[kup_procedure$corr_df$corr < 0.3,]$ID)
+```
+
+```{r}
+# number of participants excluded according to Birchenough (2017) procedure
+print("r < 0.4:")
+length(birch_procedure$weak_corr_ids) 
+print("Outliers far from main distribution (r < 0.3):")
+length(birch_procedure$corr_df[birch_procedure$corr_df$corr < 0.3,]$ID) 
+```
+
+```{r plot-internal-reliability}
+plot_corr_distribution(within_participant_corrs$corr_df, within_participant_corrs$weak_corr_ids, 
+                       title = "Internal reliability of participants",
+                       caption = "Distribution of the correlations of repeated item ratings within each participant.\n Exclusion of participants with correlation < 0.4. Dashed line denotes the group mean of correlations.")
+```
+
+```{r, eval=FALSE}
+within_participant_corrs$corr_df %>% 
+  filter(corr < 0.45) %>%
+  arrange(corr) # sort ascending
+```
+
+```{r plot-internal-reliability, eval=FALSE}
+# save_corr_distribution_plot(within_participant_corrs$corr_df, within_participant_corrs$weak_corr_ids,
+#                             save_path = "../figures/before_cleaning/corr-internal-reliability_repeated-items.pdf")
+```
+
+
+```{r}
+# number of participants excluded because of internal unreliability
+print("r < 0.4:")
+length(within_participant_corrs$weak_corr_ids)
+print("Outliers far from main distribution (r < 0.3):")
+length(within_participant_corrs$corr_df[within_participant_corrs$corr_df$corr < 0.3,]$ID) 
+```
+
+```{r}
+# if all exclusion parameters combined, how many participants actually excluded?
+print("r < 0.4:")
+length(unique(c(birch_procedure$weak_corr_ids, kup_procedure$weak_corr_ids, within_participant_corrs$weak_corr_ids)))
+print("Outliers far from main distribution (r < 0.3):")
+length(unique(c(birch_procedure$corr_df[birch_procedure$corr_df$corr < 0.3,]$ID, 
+                kup_procedure$corr_df[kup_procedure$corr_df$corr < 0.3,]$ID, 
+                within_participant_corrs$corr_df[within_participant_corrs$corr_df$corr < 0.3,]$ID)))
+```
+
+<!-- **CLEANING PIPELINE -> GROUP ESTIMATE MEAN GENERATION** -->
+
+```{r full-cleaning-pipeline}
+# EXCLUDING PARTICIPANTS + OUTLIERS
+# load raw data again to perform the whole cleaning in one cell
+aoa_info <- load_raw_data()
+# load item information
+# get item numbers used as per-participant control items (repeated items)
+repeated_a <- read_csv("../../study_setup/data/items_lists/list_A_repeated.csv", col_names="item_number")
+repeated_b <- read_csv("../../study_setup/data/items_lists/list_B_repeated.csv", col_names="item_number")
+repeated_c <- read_csv("../../study_setup/data/items_lists/list_C_repeated.csv", col_names="item_number")
+# turn tibble into list
+repeated_items <- c(repeated_a$item_number, repeated_b$item_number, repeated_c$item_number)
+# get item numbers used as global control items (shared items)
+shared_items <- read_csv("../../study_setup/data/items_lists/control_items.csv", col_names="item_number")
+shared_items <- shared_items$item_number
+
+# manual exclusion
+aoa_info <- aoa_info %>%
+  # remove participant who disqualified
+  filter(ID != 457) %>%
+  # remove typos
+  filter(!is.na(item_number) & !estimate > 20) 
+
+# Calculate correlations
+kup_procedure <- kuperman_correlations(aoa_info)
+birch_procedure <- birchenough_correlations(aoa_info)
+within_participant_corrs <- within_participant_corelations(aoa_info)
+
+# automatic exclusion
+aoa_info <- aoa_info %>%
+  # Kuperman procedure; outliers far from main distribution
+  filter(! ID %in% kup_procedure$corr_df[kup_procedure$corr_df$corr < 0.3,]$ID) %>% 
+  # Birchenough procedure; outliers far from main distribution
+  filter(! ID %in% birch_procedure$corr_df[birch_procedure$corr_df$corr < 0.3,]$ID) %>% 
+  # internally unreliable participants
+  filter(! ID %in% within_participant_corrs$corr_df[within_participant_corrs$corr_df$corr < 0.3,]$ID)
+  
+# remove single items that are outliers
+prelim_aoa_estimates <- get_estimates_overview(aoa_info, all=FALSE)
+aoa_info <- aoa_info %>% 
+  filter(!is.na(item_number)) %>% 
+  left_join(prelim_aoa_estimates, by=join_by(item_number)) %>%
+  mutate(lower_2sd = estimate_mean-2.5*estimate_sd,
+         upper_2sd = estimate_mean+2.5*estimate_sd) %>%
+  mutate(in_sd_range = between(estimate, lower_2sd, upper_2sd)) %>% 
+  # exclude outliers > 2 sd
+  filter(in_sd_range == TRUE)
+```
+
+```{r calculate-group-estimates, include=FALSE}
+# GET GROUP ESTIMATES
+aoa_estimates <- get_estimates_overview(aoa_info)
+# merge mean estimate information with additional information from aoa_info
+aoa_estimates <- aoa_estimates %>% 
+  left_join(select(aoa_info, c("item", "item_number", "example_sentence", "H_INDEX","VISUAL_COMPLEXITY", "lgSUBTLEX", "B: AoA mean", "B: AoA SD", "B: min", "B: max", "B: AoALikert mean", "B: AoALikert SD", "B: minLikert", "B: maxLikert", "S: AoALikert mean", "S: AoALikert SD")), by=join_by("item_number"), multiple="first")
+aoa_estimates <- aoa_estimates %>% 
+  relocate(item, .after = item_number)
+
+# save 
+# write_excel_csv(aoa_estimates, "../data/aoa_estimates_unique.csv")
+
+# show
+aoa_estimates
+```
+
+
+
+## Data analysis
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+```{r}
+# load saved group mean aoa estimates
+aoa_estimates <- read_csv("../data/aoa_estimates_unique.csv")
+```
+
+
+```{r rating-visualisations}
+# RATING VISUALISATIONS
+aoa_info %>% 
+  count(ID, sort = TRUE) %>% 
+  ggplot(aes(x=ID, y=n)) + 
+  geom_point() +
+  labs(title = "Number of ratings per participant after preprocessing") +
+  xlab("participant ID") +
+  ylab("number of ratings") +
+  theme_minimal()
+
+aoa_info %>% 
+  filter(repetition == 0 & !is.na(item_number) & !item_number %in% shared_items) %>%
+  count(item_number, sort = TRUE) %>% 
+  ggplot(aes(x=item_number, y=n)) + 
+  geom_point() +
+  labs(title = "Number of ratings per word after preprocessing") +
+  xlab("item number") + 
+  ylab("number of ratings") +
+  theme_minimal()
+```
+
+```{r save-rating-visualisations, eval=FALSE}
+# rat_per_sub <-  aoa_info %>%
+#                   count(ID, sort = TRUE) %>%
+#                   ggplot(aes(x=ID, y=n)) +
+#                   xlab("participant ID") +
+#                   ylab("number of ratings") +
+#                   geom_point() +
+#                   theme_minimal()
+# rat_per_word <- aoa_info %>%
+#                   filter(repetition == 0 & !is.na(item_number) & !item_number %in% shared_items) %>%
+#                   count(item_number, sort = TRUE) %>%
+#                   ggplot(aes(x=item_number, y=n)) +
+#                   xlab("item number") +
+#                   ylab("number of ratings") +
+#                   geom_point() +
+#                   theme_minimal()
+# save_plot("../figures/after_cleaning/num_ratings_per_participant.pdf", rat_per_sub)
+# save_plot("../figures/after_cleaning/num_ratings_per_word.pdf", rat_per_word)
+```
+
+
+```{r range-comparison-birchenough}
+# how do our estimates fit into Birchenough's bin ranges? 
+
+# uncomment the lines below if birchenough_aoa_bins has not been calculated before
+# birchenough_norms <- read_birchenough()
+# birchenough_aoa_bins <- birchenough_norms %>%
+#   select(NAME1, `B: AoA mean`) %>%
+#   mutate(aoa_bin_threshold = cut(birchenough_norms$`B: AoA mean`, breaks = 10)) %>%
+#   mutate(aoa_bin = as.factor(cut(birchenough_norms$`B: AoA mean`, breaks = 10, labels = FALSE)))
+
+birchenough_bin_ranges <- levels(birchenough_aoa_bins$aoa_bin_threshold)
+birchenough_bin_low <- as.numeric( sub("\\((.+),.*", "\\1", birchenough_bin_ranges))
+birchenough_bin_low <- birchenough_bin_low[-1] # drop first breakpoint
+bin_breaks <- c(0, birchenough_bin_low)
+aoa_estimates %>%
+  mutate(aoa_bin_threshold = cut(aoa_estimates$estimate_mean, breaks = bin_breaks)) %>%
+  mutate(aoa_bin = as.factor(cut(aoa_estimates$estimate_mean, breaks = bin_breaks, labels = FALSE))) %>% 
+  ggplot(aes(x=estimate_mean, fill = aoa_bin)) +
+  geom_histogram() +
+  scale_fill_brewer(palette= "Paired") +
+  labs(fill= "AoA bin") +
+  xlab("AoA estimates") +
+  labs(title = "Distribution of MultiPic age-of-acquisition estimates", caption = "Age bins used from the 10-bin calculation of all Birchenough et al. (2017) estimates.") +
+  theme_minimal()
+```
+```{r save-range-comparison-birchenough, eval=FALSE}
+# range_plot <- aoa_estimates %>%
+#                 mutate(aoa_bin_threshold = cut(aoa_estimates$estimate_mean, breaks = bin_breaks)) %>%
+#                 mutate(aoa_bin = as.factor(cut(aoa_estimates$estimate_mean, breaks = bin_breaks, labels = FALSE))) %>%
+#                 ggplot(aes(x=estimate_mean, fill = aoa_bin)) +
+#                 geom_histogram() +
+#                 scale_fill_brewer(palette= "Paired") +
+#                 labs(fill= "AoA bin") +
+#                 xlab("AoA estimates") +
+#                 theme_minimal()
+# save_plot("../figures/after_cleaning/aoa_bin_range_comparison_birchenough.pdf", range_plot)
+# 
+# lightblue <- RColorBrewer::brewer.pal(4, "Paired")[1]
+# range_plot_without_comparison <- aoa_estimates %>%
+#                 ggplot(aes(x=estimate_mean)) +
+#                 geom_histogram(fill = lightblue) +
+#                 xlab("AoA estimates") +
+#                 theme_minimal()
+# save_plot("../figures/after_cleaning/aoa_distribution.pdf", range_plot_without_comparison)
+```
+
+
+INTERNAL RELIABLILITY
+
+```{r calculate-internal-correlation}
+# redo internal correlations after database cleaning
+# if not done before, run the data preprocessing cell
+within_participant_corrs_preprocessed <- within_participant_corelations(aoa_info)
+
+# plot
+lightblue <- RColorBrewer::brewer.pal(4, "Paired")[1]
+within_participant_corrs_preprocessed$corr_df %>% 
+  ggplot(aes(x=corr)) + 
+  geom_histogram(bins = 30, fill = lightblue) +
+  geom_vline(aes(xintercept = mean(within_participant_corrs_preprocessed$corr_df$corr)), linetype=2) +
+  coord_cartesian(xlim = c(0,1)) +
+  labs(title = "Internal reliability of participants", caption = "Distribution of the correlations of repeated item ratings within each participant.\n Dashed line denotes the group mean of correlations.") +
+  theme_minimal()
+```
+```{r, eval=FALSE}
+mean(within_participant_corrs_preprocessed$corr_df$corr)
+```
+
+```{r save-internal-correlation-plot, eval=FALSE}
+# lightblue <- RColorBrewer::brewer.pal(4, "Paired")[1]
+# corr_plot <- within_participant_corrs_preprocessed$corr_df %>%
+#     ggplot(aes(x=corr)) +
+#     geom_histogram(bins = 30, fill=lightblue) +
+#     geom_vline(aes(xintercept = mean(within_participant_corrs_preprocessed$corr_df$corr)), linetype=2) +
+#     coord_cartesian(xlim = c(0,1)) +
+#     theme_minimal()
+# save_plot("../figures/after_cleaning/corr-internal-reliability_repeated-items.pdf",corr_plot)
+```
+
+
+EXTERNAL RELIABILITY
+
+```{r calculate-external-reliability-german}
+# BIRCHENOUGH
+birchenough_subset <- aoa_estimates %>% 
+  # exclude rows that don't have an estimate in Birchenough et al. (2017)
+  filter(!is.na(`B: AoA mean`))  
+# how many words in common?
+birchenough_common_words <- length(birchenough_subset$item_number)
+# calculate correlation
+birchenough_corr <- cor(birchenough_subset$estimate_mean, birchenough_subset$`B: AoA mean`)
+
+# SCHRÖDER
+schröder_subset <- aoa_estimates %>% 
+  # exclude rows that don't have an estimate in Schröder et al. (2012)
+  filter(!is.na(`S: AoALikert mean`))  
+# how many words in common?
+schröder_common_words <- length(schröder_subset$item_number)
+# Likert - Likert correlation
+schröder_corr_likertlikert <- cor(schröder_subset$estimateLikert_mean, schröder_subset$`S: AoALikert mean`)
+# mean estimates - Likert correlation
+schröder_corr_estimateslikert <- cor(schröder_subset$estimate_mean, schröder_subset$`S: AoALikert mean`)
+```
+
+```{r, eval=FALSE}
+birchenough_subset
+```
+
+
+```{r visualise-external-reliability-german}
+# our estimates vs. Birchenough
+birchenough_estimates_plot <- aoa_estimates %>% 
+  filter(!is.na(`B: AoA mean`))  %>% 
+  ggplot(aes(x=`B: AoA mean`, y=estimate_mean)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(caption = "Mean age-of-acquisition (AoA) ratings of Birchenough et al. (2017; collected on continuous scale)\nplotted against the present mean AoA ratings (collected on continuous scale).") +
+  theme_minimal()
+
+# our estimates vs. Schröder
+schröder_likertlikert_plot <- aoa_estimates %>% 
+  filter(!is.na(`S: AoALikert mean`)) %>%   
+  ggplot(aes(x=`S: AoALikert mean`, y=estimateLikert_mean)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(caption = "Mean age-of-acquisition (AoA) ratings of Schröder et al. (2012; collected on 7-point Likert scale)\nplotted against the present mean AoA ratings (collected on continuous scale, transformed into 7-point Likert scale).") +
+  theme_minimal()
+
+schröder_estimateslikert_plot <- aoa_estimates %>% 
+  filter(!is.na(`S: AoALikert mean`)) %>%   
+  ggplot(aes(x=`S: AoALikert mean`, y=estimate_mean)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(caption = "Mean age-of-acquisition (AoA) ratings of Schröder et al. (2012; collected on 7-point Likert scale)\nplotted against the present mean AoA ratings (collected on continuous scale).") +
+  theme_minimal()
+
+birchenough_estimates_plot
+schröder_likertlikert_plot
+schröder_estimateslikert_plot
+```
+
+```{r save-visualisation-external-reliability-german, eval=FALSE}
+# # our estimates vs. Birchenough
+# birchenough_estimates_plot <- aoa_estimates %>%
+#   filter(!is.na(`B: AoA mean`))  %>%
+#   ggplot(aes(x=`B: AoA mean`, y=estimate_mean)) +
+#   geom_point() +
+#   geom_smooth(method = "lm") +
+#   annotate("text", x=3.35, y=9.9, label=paste("cor =",round(birchenough_corr, digits=3)), color="blue") +
+#   ylab("estimate mean") +
+#   xlab("estimate mean: Birchenough et al. (2017)") +
+#   theme_minimal()
+# 
+# save_plot("../figures/after_cleaning/external_reliability_Birchenough.pdf", birchenough_estimates_plot)
+# 
+# # our estimates vs. Schröder
+# schröder_likertlikert_plot <- aoa_estimates %>%
+#   filter(!is.na(`S: AoALikert mean`)) %>%
+#   ggplot(aes(x=`S: AoALikert mean`, y=estimateLikert_mean)) +
+#   geom_point() +
+#   geom_smooth(method = "lm") +
+#   annotate("text", x=1.85, y=5.1, label=paste("cor =",round(schröder_corr_likertlikert, digits=3)), color="blue") +
+#   ylab("Likert-transformed estimate mean") +
+#   xlab("Likert-scale estimate mean: Schröder et al. (2012)") +
+#   theme_minimal()
+# 
+# save_plot("../figures/after_cleaning/external_reliability_Schröder_likertlikert.pdf", schröder_likertlikert_plot)
+# 
+# schröder_estimateslikert_plot <- aoa_estimates %>%
+#   filter(!is.na(`S: AoALikert mean`)) %>%
+#   ggplot(aes(x=`S: AoALikert mean`, y=estimate_mean)) +
+#   geom_point() +
+#   geom_smooth(method = "lm") +
+#   annotate("text", x=1.8, y=9.9, label=paste("cor =",round(schröder_corr_estimateslikert, digits=3)), color="blue") +
+#   ylab("estimate mean") +
+#   xlab("Likert-scale estimate mean: Schröder et al. (2012)") +
+#   theme_minimal()
+# 
+# save_plot("../figures/after_cleaning/external_reliability_Schröder_estimateslikert.pdf", schröder_estimateslikert_plot)
+```
+
+```{r show-overlap-and-corr-german, eval=FALSE}
+birchenough_common_words
+birchenough_corr
+schröder_common_words
+schröder_corr_likertlikert
+schröder_corr_estimateslikert
+
+# how many unique MultiPic items could be covered through combining
+# AoA estimates from Birchenough (2017) + Schröder (2012)?
+nrow(aoa_estimates[!is.na(aoa_estimates$`B: AoA mean`) | !is.na(aoa_estimates$`S: AoALikert mean`),])
+```
+
+```{r calculate-external-reliability-english}
+# KUPERMAN
+# English norms from Kuperman et al. (2012)
+kuperman_norms <- read_excel('../../external_resources/norms/Kuperman_2012.xlsx', na=c("#N/A", "NA"))
+# get English translation (from MultiPic)
+multipic_translations <- read_ods('../../study_setup/data/english_translation.ods') 
+# words in Kuperman don't contain any spaces, but our translations do
+# therefore, we need to remove spaces
+multipic_translations$EN_US <- str_replace_all(multipic_translations$EN_US, " ","")
+# merge aoa estimates, translation, and Kuperman estimates
+multipic_translations <- multipic_translations %>% 
+  select(c(ITEM,EN_US)) %>% 
+  left_join(select(kuperman_norms, c(Word,Rating.Mean,Rating.SD)), by=join_by("EN_US"=="Word")) %>% 
+  rename(all_of(c("K: AoA mean"="Rating.Mean", "K: AoA SD"="Rating.SD")))
+aoa_estimates <- aoa_estimates %>% 
+  left_join(multipic_translations, by=join_by("item_number"=="ITEM"))
+
+
+kuperman_subset <- aoa_estimates %>% 
+  # exclude rows that don't have an estimate in Kuperman et al. (2012)
+  filter(!is.na(`K: AoA mean`))  
+# how many words in common?
+kuperman_common_words <- length(kuperman_subset$item_number)
+# calculate correlation
+kuperman_corr <- cor(kuperman_subset$estimate_mean, kuperman_subset$`K: AoA mean`)
+```
+
+```{r visualise-external-reliability-english}
+# our estimates vs. Kuperman
+kuperman_estimates_plot <- aoa_estimates %>% 
+  filter(!is.na(`K: AoA mean`))  %>% 
+  ggplot(aes(x=`K: AoA mean`, y=estimate_mean)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(caption = "Mean age-of-acquisition (AoA) ratings of Kuperman et al. (2012; collected on continuous scale)\nplotted against the present mean AoA ratings (collected on continuous scale).") +
+  theme_minimal()
+
+kuperman_estimates_plot
+```
+
+```{r show-overlap-and-corr-english, eval=FALSE}
+kuperman_common_words
+kuperman_corr
+```
+
+```{r save-visualisation-external-reliability-english, eval=FALSE}
+# # our estimates vs. Kuperman
+# kuperman_estimates_plot <- aoa_estimates %>%
+#   filter(!is.na(`K: AoA mean`))  %>%
+#   ggplot(aes(x=`K: AoA mean`, y=estimate_mean)) +
+#   geom_point() +
+#   geom_smooth(method = "lm") +
+#   annotate("text", x=3.65, y=11.5, label=paste("cor =",round(kuperman_corr, digits=3)), color="blue") +
+#   ylab("estimate mean") +
+#   xlab("estimate mean: Kuperman et al. (2012)") +
+#   theme_minimal()
+# 
+# save_plot("../figures/after_cleaning/external_reliability_Kuperman.pdf", kuperman_estimates_plot)
+```
+
+
+
+# Discussion
+
+
+<!-- \newpage -->
+
+# References
+
+::: {#refs custom-style="Bibliography"}
+:::
