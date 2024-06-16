@@ -114,7 +114,7 @@ get_estimates_overview <- function(raw_estimates_table, all=TRUE){
 }
 
 read_birchenough <- function(select_cols=TRUE){
-  birchenough_norms <- read_csv('../../external_resources/norms/Birchenough_2017.csv')
+  birchenough_norms <- read_csv('../../external_resources/norms/Birchenough_2017.csv', locale=locale(encoding="latin1"))
   # filter for useful columns
   col_rename <- c("B: AoA mean"="AoAestimate", "B: AoA SD"="SD", "B: min"="min", "B: max"="max", "B: AoALikert mean"="AoALikert", "B: AoALikert SD"="SDLikert", "B: minLikert"="minLikert", "B: maxLikert"="maxLikert")
   birchenough_norms <- birchenough_norms %>% 
