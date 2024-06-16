@@ -195,12 +195,12 @@ within_participant_corelations <- function(df){
     sub_repeated_0 <- full_repeated[full_repeated$ID == id & full_repeated$repetition == 0,]
     sub_repeated_1 <- full_repeated[full_repeated$ID == id & full_repeated$repetition == 1,]
     # check if there are estimates for both repeated items
-    if (nrow(sub_repeated_0) == nrow(sub_repeated_1)) {
+    missing_item <- symdiff(c(sub_repeated_0$item_number), c(sub_repeated_1$item_number))
+    if (length(missing_item) == 0) {
       # if yes: correlate
       correlation <- cor(sub_repeated_0$estimate, sub_repeated_1$estimate)
     } else {
-      # if now: exclude incomplete item set from correlation calculation
-      missing_item <- setdiff(c(sub_repeated_0$item_number), c(sub_repeated_1$item_number))
+      # if not: exclude incomplete item set from correlation calculation
       sub_repeated_0 <- sub_repeated_0 %>% filter(!item_number %in% missing_item)
       sub_repeated_1 <- sub_repeated_1 %>% filter(!item_number %in% missing_item)
       correlation <- cor(sub_repeated_0$estimate, sub_repeated_1$estimate)
