@@ -2,8 +2,8 @@
 
 - **raw:**
     - **derivatives:**
-        - `item_based_data.csv`: Output from `src/data_wrangling.py`. Wrangled survey data (from the survey directory) that has been reshaped into an item-based format in order to make analyses easier.
-        - `item_based_data_add_info.csv`:
+        - `item_based_data.csv`: Output from [`data_wrangling.py`](../src/README.md#data_wranglingpy). Wrangled survey data (from the survey directory) that has been reshaped into an item-based format in order to make analyses easier.
+        - `item_based_data_add_info.csv`: Output from [`merge_database_infos.Rmd`](../src/README.md#merge_database_infosrmd). It is an extension of `item_based_data.csv`, with additional information from other existing databases.
     - **survey:** Contains the raw data from the survey. The data are split into the introduction pages which were the same for all participants (`data_survey_start.csv`) and the individual lists (`data_lists.csv`). Additionally, each data csv comes with 3 information files: the `codebook`, and an information file each regarding the used `values` and `variables`.
 - `aoa_estimates_complete.csv`: Final age-of-acquisition estimates for all 750 items of the MultiPic corpus.
 - `aoa_estimates_unique.csv`: Final age-of-acquisition estimates -- contains only the 715 unique word items from the MultiPic corpus with the highest name agreement.

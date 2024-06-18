@@ -15,7 +15,7 @@ the following structure in external_resources is expected:
 **The SUBTLEX-DE website + data storage is currently under construction and unavailable in its usual address (as of April 18, 2024)**. The former website can still be accessed through a web archive (e.g. here: [website Aug 20, 2022](https://web.archive.org/web/20220820044707/http://crr.ugent.be/); [data storage Aug 15, 2022](https://web.archive.org/web/20220815051558/http://crr.ugent.be/subtlex-de/)).
 
 For convenience, the SUBTLEX-DE frequencies are provided in this repository already (until such a time where the corpus can be easily downloaded again automatically).
-The rest of the expected structure + databases can be automatically created and downloaded by running the [download_corpora script](download_corpora.py).
+The rest of **the expected structure + databases can be automatically created and downloaded by running the [download_corpora script](download_corpora.py)**.
 
 ## download_corpora.py
 This script downloads all existing corpora necessary for the survey's stimuli creation
