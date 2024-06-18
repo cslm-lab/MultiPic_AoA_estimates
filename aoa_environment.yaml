@@ -1,4 +1,4 @@
-name: aoa_test
+name: aoa
 channels:
   - conda-forge
   - R
