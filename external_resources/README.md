@@ -54,7 +54,7 @@ In the actual information combination step, the script will collect the followin
     - Google00pm
     - lgGoogle00
     
-If there is only one orthographic variant of the current MultiPic item in the SUBTLEX-DE corpus, the frequency information of this entry will be picked. If there are several orthographic variants in SUBTLEX-DE for one MultiPic item, the variant that officially has the correct spelling will be picked. For more background on this reasoning step see [the notebook exploring the frequencies](../notebooks/exploring_frequencies.ipynb).
+If there is only one orthographic variant of the current MultiPic item in the SUBTLEX-DE corpus, the frequency information of this entry will be picked. If there are several orthographic variants in SUBTLEX-DE for one MultiPic item, the variant that officially has the correct spelling will be picked. For more background on this reasoning step see [the notebook exploring the frequencies](../study_setup/notebooks/exploring_frequencies.ipynb)
 
 The finished dataframe is then saved locally as *MultiPic_with_frequencies.csv*.
 
