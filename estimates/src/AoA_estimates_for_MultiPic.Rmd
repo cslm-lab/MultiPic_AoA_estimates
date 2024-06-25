@@ -117,6 +117,32 @@ Ratings were collected by means of online questionnaires that were generated usi
 - recruited via Prolific and university-internal participant platform (SONA)
 - reimbursement: money or VP Stunden
 -->
+```{r}
+# limit to one entry per participant
+participant_df <- aoa_info[!duplicated(aoa_info$ID),] %>% 
+  select(c(ID, platform, list, gender, age, country, education, L1, monoling, lang_dis, read_dis, sight, children, child_age))
+
+print("Number of participants:")
+length(participant_df$ID)
+print("Mean age:")
+mean(participant_df$age)
+
+# summaries for all relevant columns
+participant_df %>% 
+    count(platform)
+participant_df %>% 
+  count(list)
+participant_df %>% 
+    count(gender)
+participant_df %>% 
+    count(age)
+participant_df %>% 
+    count(sight)
+participant_df %>% 
+    count(children)
+participant_df %>% 
+    count(child_age)
+```
 
 ## Material
 Our goal was to collect German AoA ratings for the 750 items depicted as standardised line drawings in the MultiPic database [@dunabeitia2018multipic]. For this purpose we took the German naming norms provided for the pictures by the MultiPic database [@dunabeitia2018multipic] and identified unique word items. In cases of multiple entries for one word we manually compared the accompanying pictures to determine whether those items depicted the same semantic concept with different visualisations or different semantic concepts that happened to be homonymous in German (e.g., "Kette" representing pictures for both "necklace" and "chain"). Of the true duplicates, only one instance was kept for the stimulus creation (the item with higher name agreement), leaving a total of 715 word items with unique meanings. In order to clearly disambiguate the homonyms within MultiPic during the stimulus presentation, as well as to ensure that participants would generally think of the presented word items as similarly as possible, we created example sentences for each word item showcasing a particular contextual use of the word.
