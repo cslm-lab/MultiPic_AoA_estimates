@@ -137,6 +137,8 @@ participant_df %>%
 participant_df %>% 
     count(age)
 participant_df %>% 
+    count(education)
+participant_df %>% 
     count(sight)
 participant_df %>% 
     count(children)
