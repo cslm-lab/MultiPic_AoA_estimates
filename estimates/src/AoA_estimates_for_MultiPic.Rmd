@@ -274,6 +274,9 @@ prelim_aoa_estimates %>%
        caption = "Mean AoA estimates before further participants were excluded (based on Kuperman (2012)\nor Birchenough (2017) procedure). Dashed line denotes the overall mean of AoA estimates.") +
   theme_minimal()
 ```
+```{r}
+mean(prelim_aoa_estimates$estimate_mean)
+```
 
 ```{r plot-control-items-correlation-Kuperman}
 # Kuperman exclusion
@@ -281,6 +284,9 @@ prelim_aoa_estimates %>%
 plot_corr_distribution(kup_procedure$corr_df, kup_procedure$weak_corr_ids, 
                        title = "Correlations of control items: Kuperman (2012) method",
                        caption = "Distribution of the correlations of control item ratings to AoA ratings in Birchenough et al. (2017).\n Exclusion of participants with correlation < 0.4. Dashed line denotes the group mean of correlations.")
+```
+```{r}
+mean(kup_procedure$corr_df$corr)
 ```
 
 ```{r view-Kuperman-correlations, eval=FALSE}
@@ -301,6 +307,9 @@ kup_procedure$corr_df %>%
 plot_corr_distribution(birch_procedure$corr_df, birch_procedure$weak_corr_ids, 
                        title = "Correlations of control items: Birchenough (2017) method",
                        caption = "Distribution of the correlations of control item ratings to item group mean ratings.\n Exclusion of participants with correlation < 0.4. Dashed line denotes the group mean of correlations.")
+```
+```{r}
+mean(birch_procedure$corr_df$corr)
 ```
 
 ```{r view-Birchenough-correlations, eval=FALSE}
@@ -342,6 +351,9 @@ plot_corr_distribution(within_participant_corrs$corr_df, within_participant_corr
                        title = "Internal reliability of participants",
                        caption = "Distribution of the correlations of repeated item ratings within each participant.\n Exclusion of participants with correlation < 0.4. Dashed line denotes the group mean of correlations.")
 ```
+```{r}
+mean(within_participant_corrs$corr_df$corr)
+```
 
 ```{r, eval=FALSE}
 within_participant_corrs$corr_df %>% 
@@ -353,7 +365,6 @@ within_participant_corrs$corr_df %>%
 # save_corr_distribution_plot(within_participant_corrs$corr_df, within_participant_corrs$weak_corr_ids,
 #                             save_path = "../figures/before_cleaning/corr-internal-reliability_repeated-items.pdf")
 ```
-
 
 ```{r}
 # number of participants excluded because of internal unreliability
@@ -452,8 +463,8 @@ aoa_estimates <- read_csv("../data/aoa_estimates_unique.csv")
 
 ```{r rating-visualisations}
 # RATING VISUALISATIONS
-aoa_info %>% 
-  count(ID, sort = TRUE) %>% 
+num_ratings_participants <- aoa_info %>% count(ID, sort = TRUE) 
+num_ratings_participants %>% 
   ggplot(aes(x=ID, y=n)) + 
   geom_point() +
   labs(title = "Number of ratings per participant after preprocessing") +
@@ -461,15 +472,20 @@ aoa_info %>%
   ylab("number of ratings") +
   theme_minimal()
 
-aoa_info %>% 
+num_ratings_words <- aoa_info %>% 
   filter(repetition == 0 & !is.na(item_number) & !item_number %in% shared_items) %>%
-  count(item_number, sort = TRUE) %>% 
+  count(item_number, sort = TRUE)  
+num_ratings_words %>% 
   ggplot(aes(x=item_number, y=n)) + 
   geom_point() +
   labs(title = "Number of ratings per word after preprocessing") +
   xlab("item number") + 
   ylab("number of ratings") +
   theme_minimal()
+```
+```{r}
+mean(num_ratings_participants$n)
+mean(num_ratings_words$n)
 ```
 
 ```{r save-rating-visualisations, eval=FALSE}
