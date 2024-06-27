@@ -16,7 +16,7 @@
 - **min**: Smallest estimated acquisition age for each item.
 - **max**: Highest estimated acquisition age for each item.
 - **estimateLikert_mean**: Group mean age-of-acquisition estimates on a 7-point Likert scale (each continuous rating transformed into Likert rating, then group mean taken from all transformed Likert ratings).
-- **estimate_Likert_sd**: Standard deviation of the Likert-transformed age-of-acquisition estimates (`estimateLikert_mean`).
+- **estimateLikert_sd**: Standard deviation of the Likert-transformed age-of-acquisition estimates (`estimateLikert_mean`).
 - **minLikert**: Smallest estimated Likert-transformed acquisition age for each item.
 - **maxLikert**: Highest estimated Likert-transformed acquisition age for each item.
 - **example_sentence**: Disambiguating example sentences that were presented together with the items in the questionnaire.
