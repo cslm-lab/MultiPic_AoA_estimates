@@ -653,6 +653,7 @@ birchenough_estimates_plot <- aoa_estimates %>%
   ggplot(aes(x=`B: AoA mean`, y=estimate_mean)) +
   geom_point() +
   geom_smooth(method = "lm") +
+  annotate("text", x=3.35, y=9.9, label=paste("cor =",round(birchenough_corr, digits=3)), color="blue") +
   labs(caption = "Mean age-of-acquisition (AoA) ratings of Birchenough et al. (2017; collected on continuous scale)\nplotted against the present mean AoA ratings (collected on continuous scale).") +
   theme_minimal()
 
@@ -662,6 +663,7 @@ schröder_likertlikert_plot <- aoa_estimates %>%
   ggplot(aes(x=`S: AoALikert mean`, y=estimateLikert_mean)) +
   geom_point() +
   geom_smooth(method = "lm") +
+  annotate("text", x=1.85, y=5.1, label=paste("cor =",round(schröder_corr_likertlikert, digits=3)), color="blue") +
   labs(caption = "Mean age-of-acquisition (AoA) ratings of Schröder et al. (2012; collected on 7-point Likert scale)\nplotted against the present mean AoA ratings (collected on continuous scale, transformed into 7-point Likert scale).") +
   theme_minimal()
 
@@ -670,6 +672,7 @@ schröder_estimateslikert_plot <- aoa_estimates %>%
   ggplot(aes(x=`S: AoALikert mean`, y=estimate_mean)) +
   geom_point() +
   geom_smooth(method = "lm") +
+  annotate("text", x=1.8, y=9.9, label=paste("cor =",round(schröder_corr_estimateslikert, digits=3)), color="blue") +
   labs(caption = "Mean age-of-acquisition (AoA) ratings of Schröder et al. (2012; collected on 7-point Likert scale)\nplotted against the present mean AoA ratings (collected on continuous scale).") +
   theme_minimal()
 
