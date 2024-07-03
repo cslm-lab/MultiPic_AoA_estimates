@@ -586,6 +586,8 @@ aoa_estimates %>%
 ```{r distribution-mean-std, eval=FALSE}
 mean(aoa_estimates$estimate_mean)
 sd(aoa_estimates$estimate_mean)
+min(aoa_estimates$estimate_mean)
+max(aoa_estimates$estimate_mean)
 ```
 
 
