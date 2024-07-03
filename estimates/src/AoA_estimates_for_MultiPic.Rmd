@@ -583,6 +583,11 @@ aoa_estimates %>%
 # save_plot("../figures/after_cleaning/aoa_distribution.pdf", range_plot_without_comparison)
 ```
 
+```{r distribution-mean-std, eval=FALSE}
+mean(aoa_estimates$estimate_mean)
+sd(aoa_estimates$estimate_mean)
+```
+
 
 INTERNAL RELIABLILITY
 
